@@ -1,0 +1,19 @@
+{
+  "name": "3xbang-mock-server",
+  "version": "1.0.0",
+  "description": "3XBANG建筑公司模拟后端服务器",
+  "main": "mock-server.js",
+  "scripts": {
+    "start": "node mock-server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "private": true,
+  "readme": "# 三倍棒建筑公司模拟后端服务器\n\n这是一个用于开发和测试的模拟后端服务器。\n\n## 安装\n\n```bash\nnpm install\n```\n\n## 启动服务器\n\n```bash\nnpm start\n```\n\n开发模式（自动重启）：\n```bash\nnpm run dev\n```\n"
+} 

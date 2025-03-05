@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3XBANG建筑公司 - API浏览器测试</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .card {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            flex: 1;
+            min-width: 300px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, button {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .response {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            background: #f1f1f1;
+            padding: 15px;
+            border-radius: 4px;
+            overflow: auto;
+            max-height: 300px;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        .token-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: #e8f4fc;
+            border-radius: 4px;
+        }
+        .info-panel {
+            background: #fffbea;
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 4px 4px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>3XBANG建筑公司 - API浏览器测试</h1>
+    <p>此页面用于测试与后端API的集成。请尝试以下功能：</p>
+
+    <div class="info-panel">
+        <h3>⚠️ 重要说明 - 最新信息 (2025-03-06更新)</h3>
+        <p>根据最新API集成指南，API地址已更新：</p>
+        <ul>
+            <li><strong>API路径已更新</strong>：基础URL为 <code>https://ytdyeelcjbdb.sealoshzh.site/api</code>，API路径为 /auth/login</li>
+            <li><strong>测试账号</strong>：客户账号 client@example.com / client123</li>
+            <li><strong>注册要求</strong>：注册客户账号时必须提供公司名称(company)字段</li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <!-- 测试API连接 -->
+        <div class="card">
+            <h2>测试API连接</h2>
+            <button id="testConnection">测试连接</button>
+            <div id="connectionResponse" class="response">结果将显示在这里...</div>
+        </div>
+
+        <!-- 用户登录 -->
+        <div class="card">
+            <h2>用户登录</h2>
+            <div class="form-group">
+                <label for="loginEmail">电子邮箱:</label>
+                <input type="email" id="loginEmail" value="admin@example.com" placeholder="例如: admin@example.com">
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">密码:</label>
+                <input type="password" id="loginPassword" value="admin123" placeholder="例如: admin123">
+            </div>
+            <button id="loginButton">登录</button>
+            <div id="loginResponse" class="response">结果将显示在这里...</div>
+            <div id="tokenInfo" class="token-info" style="display: none;"></div>
+        </div>
+
+        <!-- 用户注册 -->
+        <div class="card">
+            <h2>用户注册</h2>
+            <div class="form-group">
+                <label for="registerFirstName">名字:</label>
+                <input type="text" id="registerFirstName" placeholder="例如: 三">
+            </div>
+            <div class="form-group">
+                <label for="registerLastName">姓氏:</label>
+                <input type="text" id="registerLastName" placeholder="例如: 张">
+            </div>
+            <div class="form-group">
+                <label for="registerEmail">电子邮箱:</label>
+                <input type="email" id="registerEmail" placeholder="例如: test@example.com">
+            </div>
+            <div class="form-group">
+                <label for="registerPassword">密码:</label>
+                <input type="password" id="registerPassword" placeholder="输入密码">
+            </div>
+            <div class="form-group">
+                <label for="registerRole">角色:</label>
+                <input type="text" id="registerRole" value="client" placeholder="例如: client, admin, employee, manager">
+            </div>
+            <div class="form-group">
+                <label for="registerCompany">公司名称: (仅客户角色需要)</label>
+                <input type="text" id="registerCompany" placeholder="例如: ABC公司">
+            </div>
+            <div class="form-group">
+                <label for="registerPhone">电话号码: (可选)</label>
+                <input type="text" id="registerPhone" placeholder="例如: 13800138000">
+            </div>
+            <button id="registerButton">注册</button>
+            <div id="registerResponse" class="response">结果将显示在这里...</div>
+        </div>
+
+        <!-- 会话检查 -->
+        <div class="card">
+            <h2>会话检查</h2>
+            <button id="checkSessionButton" disabled>检查会话</button>
+            <div id="sessionResponse" class="response">请先登录获取令牌...</div>
+        </div>
+
+        <!-- 用户登出 -->
+        <div class="card">
+            <h2>用户登出</h2>
+            <button id="logoutButton" disabled>登出</button>
+            <div id="logoutResponse" class="response">请先登录获取令牌...</div>
+        </div>
+    </div>
+
+    <script>
+        // API客户端配置
+        const API_CONFIG = {
+            baseURL: 'https://ytdyeelcjbdb.sealoshzh.site/api', // 更新为线上API基础URL
+            token: null
+        };
+
+        // 通用API请求函数
+        async function apiRequest(method, endpoint, data = null, useToken = false) {
+            const url = `${API_CONFIG.baseURL}${endpoint}`;
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            if (useToken && API_CONFIG.token) {
+                headers['Authorization'] = `Bearer ${API_CONFIG.token}`;
+            }
+
+            const options = {
+                method,
+                headers
+            };
+
+            if (data && (method === 'POST' || method === 'PUT')) {
+                options.body = JSON.stringify(data);
+            }
+
+            try {
+                const response = await fetch(url, options);
+                const responseData = await response.json();
+                return {
+                    status: response.status,
+                    data: responseData,
+                    success: response.ok
+                };
+            } catch (error) {
+                return {
+                    status: 0,
+                    data: { error: error.message },
+                    success: false
+                };
+            }
+        }
+
+        // 保存令牌并启用相关按钮
+        function saveToken(token) {
+            API_CONFIG.token = token;
+            document.getElementById('checkSessionButton').disabled = false;
+            document.getElementById('logoutButton').disabled = false;
+            
+            // 显示令牌信息
+            const tokenInfo = document.getElementById('tokenInfo');
+            tokenInfo.innerHTML = `<strong>已获取JWT令牌</strong><br/>可以使用会话检查和登出功能`;
+            tokenInfo.style.display = 'block';
+        }
+
+        // 清除令牌并禁用相关按钮
+        function clearToken() {
+            API_CONFIG.token = null;
+            document.getElementById('checkSessionButton').disabled = true;
+            document.getElementById('logoutButton').disabled = true;
+            
+            // 隐藏令牌信息
+            document.getElementById('tokenInfo').style.display = 'none';
+        }
+
+        // 格式化响应数据
+        function formatResponse(response) {
+            return `状态码: ${response.status}\n${response.success ? '成功' : '失败'}\n数据: ${JSON.stringify(response.data, null, 2)}`;
+        }
+
+        // 记录请求信息（用于调试）
+        function logRequestInfo(method, url, data) {
+            console.log(`发送${method}请求到: ${url}`);
+            if (data) console.log('请求数据:', data);
+        }
+
+        // 测试API连接
+        document.getElementById('testConnection').addEventListener('click', async () => {
+            const responseElement = document.getElementById('connectionResponse');
+            responseElement.innerHTML = '正在测试连接...';
+            
+            try {
+                const response = await apiRequest('GET', '');
+                logRequestInfo('GET', `${API_CONFIG.baseURL}`, null);
+                responseElement.innerHTML = formatResponse(response);
+                responseElement.className = response.success ? 'response success' : 'response error';
+            } catch (error) {
+                responseElement.innerHTML = `连接错误: ${error.message}`;
+                responseElement.className = 'response error';
+            }
+        });
+
+        // 用户登录
+        document.getElementById('loginButton').addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const responseElement = document.getElementById('loginResponse');
+            
+            if (!email || !password) {
+                responseElement.innerHTML = '请输入电子邮箱和密码';
+                responseElement.className = 'response error';
+                return;
+            }
+            
+            responseElement.innerHTML = '登录中...';
+            const requestData = { email, password };
+            logRequestInfo('POST', `${API_CONFIG.baseURL}/auth/login`, requestData);
+            
+            try {
+                const response = await apiRequest('POST', '/auth/login', requestData);
+                responseElement.innerHTML = formatResponse(response);
+                responseElement.className = response.success ? 'response success' : 'response error';
+                
+                if (response.success && response.data.token) {
+                    saveToken(response.data.token);
+                } else {
+                    clearToken();
+                }
+            } catch (error) {
+                responseElement.innerHTML = `登录错误: ${error.message}`;
+                responseElement.className = 'response error';
+                clearToken();
+            }
+        });
+
+        // 用户注册
+        document.getElementById('registerButton').addEventListener('click', async () => {
+            const firstName = document.getElementById('registerFirstName').value;
+            const lastName = document.getElementById('registerLastName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const role = document.getElementById('registerRole').value;
+            const company = document.getElementById('registerCompany').value;
+            const phone = document.getElementById('registerPhone').value;
+            const responseElement = document.getElementById('registerResponse');
+            
+            if (!firstName || !lastName || !email || !password) {
+                responseElement.innerHTML = '请输入名字、姓氏、电子邮箱和密码';
+                responseElement.className = 'response error';
+                return;
+            }
+            
+            if (role === 'client' && !company) {
+                responseElement.innerHTML = '客户必须提供公司名称';
+                responseElement.className = 'response error';
+                return;
+            }
+            
+            responseElement.innerHTML = '注册中...';
+            
+            const requestData = { 
+                firstName,
+                lastName,
+                email, 
+                password,
+                role: role || 'client'
+            };
+            
+            // 仅在有值时添加可选字段
+            if (company) requestData.company = company;
+            if (phone) requestData.phone = phone;
+            
+            logRequestInfo('POST', `${API_CONFIG.baseURL}/auth/register`, requestData);
+            
+            try {
+                const response = await apiRequest('POST', '/auth/register', requestData);
+                responseElement.innerHTML = formatResponse(response);
+                responseElement.className = response.success ? 'response success' : 'response error';
+                
+                // 如果注册成功且返回了令牌，自动保存令牌
+                if (response.success && response.data && response.data.token) {
+                    saveToken(response.data.token);
+                }
+            } catch (error) {
+                responseElement.innerHTML = `注册错误: ${error.message}`;
+                responseElement.className = 'response error';
+            }
+        });
+
+        // 会话检查
+        document.getElementById('checkSessionButton').addEventListener('click', async () => {
+            const responseElement = document.getElementById('sessionResponse');
+            
+            if (!API_CONFIG.token) {
+                responseElement.innerHTML = '请先登录获取令牌';
+                responseElement.className = 'response error';
+                return;
+            }
+            
+            responseElement.innerHTML = '检查会话中...';
+            logRequestInfo('GET', `${API_CONFIG.baseURL}/auth/check-session`, null);
+            
+            try {
+                const response = await apiRequest('GET', '/auth/check-session', null, true);
+                responseElement.innerHTML = formatResponse(response);
+                responseElement.className = response.success ? 'response success' : 'response error';
+            } catch (error) {
+                responseElement.innerHTML = `会话检查错误: ${error.message}`;
+                responseElement.className = 'response error';
+            }
+        });
+
+        // 用户登出
+        document.getElementById('logoutButton').addEventListener('click', async () => {
+            const responseElement = document.getElementById('logoutResponse');
+            
+            if (!API_CONFIG.token) {
+                responseElement.innerHTML = '请先登录获取令牌';
+                responseElement.className = 'response error';
+                return;
+            }
+            
+            responseElement.innerHTML = '登出中...';
+            logRequestInfo('POST', `${API_CONFIG.baseURL}/auth/logout`, {});
+            
+            try {
+                const response = await apiRequest('POST', '/auth/logout', {}, true);
+                responseElement.innerHTML = formatResponse(response);
+                responseElement.className = response.success ? 'response success' : 'response error';
+                
+                if (response.success) {
+                    clearToken();
+                }
+            } catch (error) {
+                responseElement.innerHTML = `登出错误: ${error.message}`;
+                responseElement.className = 'response error';
+            }
+        });
+    </script>
+</body>
+</html> 
